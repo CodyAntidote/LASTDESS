@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Help Request</title>
+    <link rel="stylesheet" href="css/Addrequest.css">
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9; /* Light gray background */
+            color: #333;
+        }
+
+        /* Header styling */
+        header {
+            background: rgba(0, 123, 255, 0.5), url('images/new.jpg'); /* Semi-transparent background over the image */
+            background-size: cover; /* Cover the header */
+            background-position: center top; /* Position image at the top center */
+            color: white;
+            padding: 2rem; /* Increased padding for a bigger header */
+            text-align: center;
+            font-size: 1.5rem; /* Font size for header */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            width: 100%; /* Full width */
+            position: relative; /* To position elements correctly */
+            overflow: hidden; /* Ensure pseudo-element is contained */
+        }
+
+            header::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('images/new.jpg'); /* Background image */
+                background-size: cover; /* Cover the header */
+                background-position: center top; /* Position image at the top center */
+                filter: blur(8px); /* Apply blur effect */
+                z-index: 0; /* Behind the content */
+            }
+
+            header h1 {
+                position: relative; /* Ensure text is above the blurred background */
+                z-index: 1; /* Above the blurred background */
+                font-size: 3rem; /* Larger font size for the main heading */
+                margin-bottom: 0.5rem; /* Space below header */
+            }
+
+            header nav {
+                margin-top: 5px; /* Adjusted margin */
+                position: relative; /* Ensure nav is above the blurred background */
+                z-index: 1; /* Above the blurred background */
+            }
+
+            header a {
+                color: #ffdd57; /* Yellow */
+                margin: 0 10px; /* Reduced margin */
+                margin-right: 15px;
+                text-decoration: none;
+                font-size: 1rem; /* Font size for links */
+                transition: color 0.3s ease;
+            }
+
+                header a:hover {
+                    color: #ffffff; /* Change color on hover */
+                    text-decoration: underline;
+                }
+            header nav a {
+                color: #ffdd57; /* Yellow */
+                text-decoration: none;
+                font-size: 1.1rem;
+                margin: 0 15px;
+                transition: color 0.3s;
+            }
+
+                header nav a:hover {
+                    color: white; /* Change color on hover */
+                }
+
+        /* Main Section Styling */
+        main {
+            padding: 2rem 5%;
+            max-width: 800px; /* Limit the width of the form */
+            margin: 20px auto; /* Center align */
+            background-color: white; /* White background for the form area */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column; /* Stack form elements */
+        }
+
+        label {
+            margin-bottom: 0.5rem; /* Space below label */
+            font-weight: bold; /* Bold labels */
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%; /* Full width inputs */
+            padding: 0.8rem; /* Padding for inputs */
+            border: 1px solid #ccc; /* Border color */
+            border-radius: 5px; /* Rounded corners */
+            transition: border-color 0.3s; /* Smooth border transition */
+        }
+
+            input[type="text"]:focus,
+            textarea:focus,
+            select:focus {
+                border-color: #007bff; /* Border color on focus */
+                outline: none; /* Remove default outline */
+            }
+
+        /* Submit Button Styling */
+        button[type="submit"] {
+            background-color: #808080; /* Button background */
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem; /* Button padding */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s;
+    </style> <!-- Link the updated add-request.js -->
+</head>
+<body>
+    <header>
+        <h1>Add Help Request</h1>
+        <a href="index.html">Home</a>
+    </header>
+    <main>
+        <h2>Create a New Help Request</h2>
+        <form id="request-form">
+            <!-- Title Input Field -->
+            <label for="title">Title</label>
+            <input type="text" id="title" placeholder="Enter the title" required>
+
+            <!-- Description Input Field -->
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="Enter a detailed description" required></textarea>
+
+            <!-- Status Dropdown -->
+            <label for="status">Status</label>
+            <select id="status" required>
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+
+            <!-- Submit Button -->
+            <button type="submit">Submit</button>
+        </form>
+
+        <!-- Notification Area -->
+        <div id="notification" class="notification" style="display: none;"></div>
+    </main>
+    <script>
+     
+
+        document.getElementById('request-form').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get form values
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const status = document.getElementById('status').value;
+
+            // Create a request object
+            const request = {
+                title: title,
+                description: description,
+                status: status
+            };
+
+            try {
+                // Make the API call to submit the request
+                const response = await fetch("https://localhost:7117/api/HelpRequestctrl", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(request), // Send the request as JSON
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message || 'Your request has been submitted!'); // Show success message
+                    window.location.href = 'HelpRequest.html'; // Redirect to HelpRequest page
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Error submitting request. Please try again.'); // Show error message
+                }
+            } catch (error) {
+                console.error("Error:", error); // Log any network errors
+                alert('Error submitting the request. Please check your network.'); // Show network error message
+            }
+        });
+    </script>
+</body>
+</html>

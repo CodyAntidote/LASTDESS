@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="CSS/admin.css"> <!-- Link to your CSS -->
+    
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+
+    <div id="loginForm">
+        <h2>Login</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" required>
+        <button id="loginButton">Login</button>
+        <div id="errorMessage" style="color: red;"></div> <!-- Error message display -->
+    </div>
+
+    <nav style="display: none;" id="nav">
+        <ul>
+            <li><button id="fetchDataButton">Fetch Data</button></li>
+            <li><button id="viewPage1Button" style="display: none;">View Page 1</button></li>
+            <li><button id="viewPage2Button" style="display: none;">View Page 2</button></li>
+        </ul>
+    </nav>
+
+    <div id="dataContainer" style="margin-top: 20px;"></div>
+    <script>
+        let fetchedData = {
+            helpRequests: [],
+            volunteers: [],
+            users: [],
+            contacts: [],
+        };
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Check if admin is already logged in
+            const isAdmin = localStorage.getItem("isAdmin");
+
+            if (isAdmin) {
+                showAdminDashboard();
+            } else {
+                document.getElementById("loginForm").style.display = 'block'; // Show login form
+            }
+
+            // Login button event
+            document.getElementById("loginButton").addEventListener("click", function () {
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+
+                // Replace with your actual admin credentials
+                const adminUsername = "admin"; // Example username
+                const adminPassword = "password123"; // Example password
+
+                // Check credentials
+                if (username === adminUsername && password === adminPassword) {
+                    localStorage.setItem("isAdmin", true); // Set admin status
+                    showAdminDashboard();
+                } else {
+                    document.getElementById("errorMessage").innerText = "Invalid credentials. Please try again.";
+                }
+            });
+
+            // Fetch data button event
+            document.getElementById("fetchDataButton").addEventListener("click", function () {
+                fetchData();
+            });
+
+            // View Page 1 button event
+            document.getElementById("viewPage1Button").addEventListener("click", function () {
+                showPage1();
+            });
+
+            // View Page 2 button event
+            document.getElementById("viewPage2Button").addEventListener("click", function () {
+                showPage2();
+            });
+
+            // Handle back navigation
+            window.addEventListener('beforeunload', function () {
+                localStorage.removeItem("isAdmin"); // Clear admin status on page leave
+            });
+        });
+
+        function showAdminDashboard() {
+            document.getElementById("loginForm").style.display = 'none'; // Hide login form
+            document.getElementById("nav").style.display = 'block'; // Show navigation
+            document.getElementById("fetchDataButton").style.display = 'block'; // Show fetch data button
+        }
+
+        function fetchData() {
+            const endpoints = {
+                helpRequests: 'https://localhost:7117/api/HelpRequestctrl',
+                volunteers: 'https://localhost:7117/api/Volunteers',
+                users: 'https://localhost:7117/api/User',
+                contacts: 'https://localhost:7117/api/ContactCtrl',
+            };
+
+            // Fetch help requests and volunteers
+            Promise.all([
+                fetch(endpoints.helpRequests),
+                fetch(endpoints.volunteers),
+                fetch(endpoints.users),
+                fetch(endpoints.contacts)
+            ])
+                .then(responses => {
+                    if (!responses.every(response => response.ok)) {
+                        throw new Error('Failed to fetch one or more endpoints');
+                    }
+                    return Promise.all(responses.map(response => response.json()));
+                })
+                .then(data => {
+                    // Assign fetched data to the global variable
+                    fetchedData.helpRequests = data[0];
+                    fetchedData.volunteers = data[1];
+                    fetchedData.users = data[2];
+                    fetchedData.contacts = data[3];
+
+                    // Show buttons for viewing pages
+                    document.getElementById("viewPage1Button").style.display = 'block';
+                    document.getElementById("viewPage2Button").style.display = 'block';
+
+                    // Optionally show Page 1 immediately after fetching
+                    showPage1();
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('dataContainer').innerText = 'Error loading data.';
+                });
+        }
+
+        function showPage1() {
+            const dataContainer = document.getElementById('dataContainer');
+            dataContainer.innerHTML = ''; // Clear previous data
+
+            // Display help requests with timestamps
+            const helpRequestsDiv = document.createElement('div');
+            helpRequestsDiv.innerHTML = `<h2>Help Requests</h2>`;
+
+            fetchedData.helpRequests.forEach(item => {
+                console.log("Raw submittedAt:", item.submittedAt); // Log the raw date for debugging
+
+                const submittedAt = new Date(item.submittedAt); // Use 'submittedAt' instead of 'date'
+                console.log("Parsed date:", submittedAt); // Log the parsed date
+
+                const isInvalidDate = isNaN(submittedAt.getTime()) ||
+                    item.submittedAt === "0001-01-01T00:00:00" ||
+                    item.submittedAt === ""; // Check for empty strings
+
+                const displayTime = isInvalidDate ? 'Submission time not available' : submittedAt.toLocaleString();
+
+                const title = item.title || 'No title available';
+                const description = item.description || 'No description available';
+
+                const itemDiv = document.createElement('div');
+                itemDiv.innerHTML = `<strong>${title}</strong>: ${description} <br> <em>Submitted at: ${displayTime}</em>`;
+                helpRequestsDiv.appendChild(itemDiv);
+            });
+
+            // Display volunteers
+            const volunteersDiv = document.createElement('div');
+            volunteersDiv.innerHTML = `<h2>Volunteers</h2>`;
+
+            fetchedData.volunteers.forEach(item => {
+                console.log("Raw submittedAt:", item.submittedAt); // Log the raw date for debugging
+
+                const submittedAt = new Date(item.submittedAt); // Use 'submittedAt' for volunteers
+                const isInvalidSubmittedAt = isNaN(submittedAt.getTime()) ||
+                    item.submittedAt === "0001-01-01T00:00:00" ||
+                    item.submittedAt === ""; // Check for empty strings
+
+                const displaySubmittedAt = isInvalidSubmittedAt ? 'Join time not available' : submittedAt.toLocaleString();
+
+                const name = item.name || 'No name available';
+                const contact = item.contact || 'No contact available';
+                const availability = item.availability || 'No availability info';
+
+                const itemDiv = document.createElement('div');
+                itemDiv.innerHTML = `<strong>${name}</strong>: ${contact}, Availability: ${availability} <br> <em>Joined at: ${displaySubmittedAt}</em>`;
+                volunteersDiv.appendChild(itemDiv);
+            });
+
+            dataContainer.appendChild(helpRequestsDiv);
+            dataContainer.appendChild(volunteersDiv);
+        }
+        function showPage2() {
+            const dataContainer = document.getElementById('dataContainer');
+            dataContainer.innerHTML = ''; // Clear previous data
+
+            const usersDiv = document.createElement('div');
+            usersDiv.innerHTML = `<h2>Users</h2>`;
+            fetchedData.users.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.innerHTML = `<strong>${item.name}</strong>: ${item.email} <br> <em>Location: ${item.location} <br> Submitted at: ${new Date(item.submittedAt).toLocaleString()}</em>`;
+                usersDiv.appendChild(itemDiv);
+            });
+
+            // Display contacts with timestamps
+            const contactsDiv = document.createElement('div');
+            contactsDiv.innerHTML = `<h2>Contact Us</h2>`;
+            fetchedData.contacts.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.innerHTML = `<strong>${item.name}</strong>: ${item.message} <br> <em>Email: ${item.email} | Submitted at: ${new Date(item.submittedAt).toLocaleString()}</em>`;
+                contactsDiv.appendChild(itemDiv);
+            });
+
+            dataContainer.appendChild(usersDiv);
+            dataContainer.appendChild(contactsDiv);
+        }
+    </script>
+</body>
+</html>

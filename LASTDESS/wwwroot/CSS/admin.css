@@ -1,0 +1,193 @@
+﻿/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #5a5a5a; /* Matter gray */
+}
+
+#loginForm {
+    display: none; /* Hide login form initially */
+    margin: 20px auto; /* Center the form horizontally */
+    background-color: #ffffff;
+    padding: 40px; /* Increased padding for more height */
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 400px; /* Set a maximum width for the form */
+    width: 100%; /* Make it responsive */
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    color: #4a4a4a; /* Dark gray */
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 15px; /* Increased padding for input fields */
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+        border-color: #4a90e2; /* Focus color */
+        outline: none;
+    }
+
+button {
+    background-color: #808080; /* Soft blue */
+    color: white;
+    border: none; /* Remove border */
+    padding: 15px 20px; /* Increased padding for the button */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+    button:hover {
+        background-color: #696969; /* Darker blue on hover */
+    }
+
+#errorMessage {
+    color: red;
+    margin-top: 10px;
+    font-size: 0.9em; /* Adjust font size for better fit */
+}
+
+nav {
+    margin: 20px 0;
+}
+
+    nav ul {
+        list-style: none;
+        padding: 0;
+        display: flex; /* Use flexbox for horizontal layout */
+        align-items: center; /* Center items vertically */
+    }
+
+    nav li {
+        margin-right: 15px; /* Space between buttons */
+    }
+
+    nav button {
+        background-color: #4a90e2; /* Soft blue background */
+        color: white; /* Text color */
+        border: none; /* Remove border */
+        padding: 10px 20px; /* Padding for buttons */
+        border-radius: 5px; /* Rounded corners */
+        font-size: 16px; /* Font size */
+        cursor: pointer; /* Pointer cursor on hover */
+        transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    }
+
+        nav button:hover {
+            background-color: #357ab8; /* Darker blue on hover */
+            transform: translateY(-2px); /* Lift effect on hover */
+        }
+
+        nav button:focus {
+            outline: none; /* Remove outline */
+            box-shadow: 0 0 3px #4a90e2; /* Add a glow effect on focus */
+        }
+
+/* Dashboard Styles */
+
+
+h2 {
+    color: #4a90e2; /* Soft blue for headings */
+    border-bottom: 2px solid #4a90e2; /* Underline for headings */
+    padding-bottom: 5px; /* Space below heading */
+    margin-bottom: 15px; /* Space below heading */
+}
+
+.data-section {
+    background-color: #f9f9f9; /* Light gray background for sections */
+    padding: 15px;
+    margin-bottom: 20px; /* Space between sections */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.data-item {
+    padding: 10px;
+    border: 1px solid #ddd; /* Light border for items */
+    border-radius: 5px; /* Rounded corners */
+    margin-bottom: 10px; /* Space between items */
+    transition: background-color 0.3s; /* Smooth background change */
+}
+
+    .data-item:hover {
+        background-color: #e6f7ff; /* Light blue background on hover */
+    }
+
+strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+    color: #333;
+}
+
+em {
+    font-size: 0.9em;
+    color: #777; /* Light gray for less emphasis */
+}
+
+footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    button {
+        padding: 12px 16px;
+    }
+}
+
+@media (max-width: 500px) {
+    body {
+        padding: 10px;
+    }
+
+    #loginForm {
+        padding: 30px; /* Adjusted padding for smaller screens */
+    }
+
+    #dataContainer {
+        padding: 15px; /* Adjust for smaller screens */
+    }
+
+    .data-section {
+        padding: 10px; /* Adjusted padding for data sections */
+    }
+}
